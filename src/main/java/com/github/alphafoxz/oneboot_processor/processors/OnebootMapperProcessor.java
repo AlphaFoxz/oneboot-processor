@@ -27,40 +27,43 @@ public class OnebootMapperProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (Element element : roundEnv.getElementsAnnotatedWith(OnebootMapper.class)) {
-            if (!ElementKind.INTERFACE.equals(element.getKind()) && !ElementKind.CLASS.equals(element.getKind())) {
-                messager.printMessage(Diagnostic.Kind.ERROR, "Only interfaces or classes can be annotated with @OnebootMapper.");
-                return true;
-            }
-            String packageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
-            String className = element.getSimpleName() + "Impl";
 
-            TypeSpec.Builder clazzBuilder = TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC);
-            for (Element member : processingEnv.getElementUtils().getAllMembers((TypeElement) element)) {
-                if (!ElementKind.FIELD.equals(member.getKind())) {
-                    continue;
-                }
-                VariableElement fieldElement = (VariableElement) member;
-                OnebootMapping anno = fieldElement.getAnnotation(OnebootMapping.class);
-                if (anno == null) {
-                    continue;
-                }
-                for (Class<?> target : Set.of(anno.targets())) {
-                    MethodSpec method = MethodSpec.methodBuilder(fieldElement.getSimpleName().toString())
-                            .addModifiers(Modifier.PUBLIC)
-                            .returns(target)
-                            .addStatement("return null") // Replace with actual getter logic
-                            .build();
-                    clazzBuilder.addMethod(method);
-                }
-            }
-            JavaFile file = JavaFile.builder(packageName, clazzBuilder.build())
-                    .build();
+        for (Element element : roundEnv.getElementsAnnotatedWith(OnebootMapper.class)) {
             try {
+                if (!ElementKind.INTERFACE.equals(element.getKind()) && !ElementKind.CLASS.equals(element.getKind())) {
+                    messager.printMessage(Diagnostic.Kind.ERROR, "Only interfaces or classes can be annotated with @OnebootMapper.");
+                    return true;
+                }
+                String packageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
+                String className = element.getSimpleName() + "Impl";
+
+                TypeSpec.Builder clazzBuilder = TypeSpec.classBuilder(className)
+                        .addModifiers(Modifier.PUBLIC);
+                for (Element member : processingEnv.getElementUtils().getAllMembers((TypeElement) element)) {
+                    if (!ElementKind.FIELD.equals(member.getKind())) {
+                        continue;
+                    }
+                    VariableElement fieldElement = (VariableElement) member;
+                    OnebootMapping anno = fieldElement.getAnnotation(OnebootMapping.class);
+                    if (anno == null) {
+                        continue;
+                    }
+                    for (Class<?> target : Set.of(anno.targets())) {
+                        MethodSpec method = MethodSpec.methodBuilder(fieldElement.getSimpleName().toString())
+                                .addModifiers(Modifier.PUBLIC)
+                                .returns(target)
+                                .addStatement("return null") // Replace with actual getter logic
+                                .build();
+                        clazzBuilder.addMethod(method);
+                    }
+                }
+                JavaFile file = JavaFile.builder(packageName, clazzBuilder.build())
+                        .build();
+
                 file.writeTo(processingEnv.getFiler());
+
             } catch (Exception e) {
-                messager.printMessage(Diagnostic.Kind.ERROR, "Failed to generate class for " + element.getSimpleName());
+                messager.printMessage(Diagnostic.Kind.ERROR, "Failed to generate class for " + element.getSimpleName() + ": " + e.getMessage());
             }
         }
         return true;
