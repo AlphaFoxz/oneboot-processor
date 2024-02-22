@@ -31,14 +31,7 @@ configurations.all {
 }
 dependencyManagement {
     imports {
-        org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
         mavenBom(project.property("parentProject") as String)
-    }
-    dependencies {
-        dependency("com.squareup:javapoet:1.13.0")
-        dependency("com.google.auto.service:auto-service:1.1.1")
-        dependency("org.mapstruct:mapstruct:1.5.5.Final")
-        dependency("org.mapstruct:mapstruct-processor:1.5.5.Final")
     }
 }
 dependencies {
@@ -56,8 +49,10 @@ publishing {
             version = rootVersion
             from(components["java"])
 
-            dependencies {
-                implementation("com.squareup:javapoet:1.13.0")
+            versionMapping {
+                allVariants {
+                    fromResolutionResult()
+                }
             }
         }
     }

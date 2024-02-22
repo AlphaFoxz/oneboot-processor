@@ -18,7 +18,7 @@ import java.util.Set;
 @SupportedAnnotationTypes("com.github.alphafoxz.oneboot_annotation.*") // 指定处理器应处理的注解类型
 @SupportedSourceVersion(SourceVersion.RELEASE_17) // 指定支持的源代码版本
 @AutoService(Processor.class)
-public class GetTestProcessor extends AbstractProcessor {
+public class GetterTestProcessor extends AbstractProcessor {
     private Messager messager;
 
     @Override
