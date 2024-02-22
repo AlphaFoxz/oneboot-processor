@@ -1,6 +1,6 @@
-package com.github.alphafoxz.oneboot_processor.processor;
+package com.github.alphafoxz.oneboot_processor.processors;
 
-import com.github.alphafoxz.oneboot_processor.anno.GetterTest;
+import com.github.alphafoxz.oneboot_processor.annotations.OnebootTest;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -15,10 +15,10 @@ import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.util.Set;
 
-@SupportedAnnotationTypes(Const.ANNOTATIONS_PREFIX) // 指定处理器应处理的注解类型
+@SupportedAnnotationTypes(Const.ANNOTATIONS_PACKAGE + ".OnebootTest") // 指定处理器应处理的注解类型
 @SupportedSourceVersion(SourceVersion.RELEASE_17) // 指定支持的源代码版本
 @AutoService(Processor.class)
-public class GetterTestProcessor extends AbstractProcessor {
+public class OnebootTestProcessor extends AbstractProcessor {
     private Messager messager;
 
     @Override
@@ -29,30 +29,30 @@ public class GetterTestProcessor extends AbstractProcessor {
 
     @Override
     public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (Element element : roundEnv.getElementsAnnotatedWith(GetterTest.class)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(OnebootTest.class)) {
 //            if (element.getKind() != ElementKind.FIELD) {
 //                messager.printMessage(Diagnostic.Kind.ERROR, "GetterTest annotation can only be applied to fields.");
 //                return true;
 //            }
-            String packageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
-            messager.printMessage(Diagnostic.Kind.NOTE, "packageName: " + packageName);
-            String className = element.getSimpleName() + "Getter";
-            messager.printMessage(Diagnostic.Kind.NOTE, "className: " + className);
-            String getterMethodName = "get" + element.getSimpleName().toString();
-            messager.printMessage(Diagnostic.Kind.NOTE, "getterMethodName: " + getterMethodName);
+            String testPackageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
+            messager.printMessage(Diagnostic.Kind.NOTE, "testPackageName: " + testPackageName);
+            String testClassName = element.getSimpleName() + "Impl";
+            messager.printMessage(Diagnostic.Kind.NOTE, "testClassName: " + testClassName);
+            String testMethodName = "get" + element.getSimpleName().toString();
+            messager.printMessage(Diagnostic.Kind.NOTE, "testMethodName: " + testMethodName);
 
-            MethodSpec getterMethod = MethodSpec.methodBuilder(getterMethodName)
+            MethodSpec testMethod = MethodSpec.methodBuilder(testMethodName)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(String.class)
                     .addStatement("return null") // Replace with actual getter logic
                     .build();
 
-            TypeSpec getterClass = TypeSpec.classBuilder(className)
+            TypeSpec testClass = TypeSpec.classBuilder(testClassName)
                     .addModifiers(Modifier.PUBLIC)
-                    .addMethod(getterMethod)
+                    .addMethod(testMethod)
                     .build();
 
-            JavaFile javaFile = JavaFile.builder(packageName, getterClass)
+            JavaFile javaFile = JavaFile.builder(testPackageName, testClass)
                     .build();
 
             try {

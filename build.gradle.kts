@@ -2,7 +2,7 @@ var rootGroupId = "com.github.AlphaFoxz"
 var rootArtifactId = "oneboot-processor"
 var rootVersion = "0.0.1-alpha.0"
 plugins {
-    id("java")
+    id("java-library")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("maven-publish")
@@ -38,7 +38,7 @@ dependencies {
     implementation("com.squareup:javapoet")
     compileOnly("com.google.auto.service:auto-service")
     annotationProcessor("com.google.auto.service:auto-service")
-    compileOnly("org.mapstruct:mapstruct")
+    api("org.mapstruct:mapstruct")
     annotationProcessor("org.mapstruct:mapstruct-processor")
 }
 publishing {
