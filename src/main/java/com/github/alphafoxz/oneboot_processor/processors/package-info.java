@@ -4,13 +4,11 @@
 package com.github.alphafoxz.oneboot_processor.processors;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.ParameterSpec;
 
 import javax.lang.model.element.VariableElement;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.*;
 
 class Const {
@@ -34,23 +32,15 @@ class Func {
         return result;
     }
 
-    static <T extends Annotation> AnnotationSpec fromAnnotation(T anno) {
-        return AnnotationSpec.get(anno);
+    static <T extends Annotation> AnnotationSpec createAnnotationSpec(Class<T> clazz, Map<String, String> members) {
+        AnnotationSpec.Builder builder = AnnotationSpec.builder(clazz);
+        for (Map.Entry<String, String> entry : members.entrySet()) {
+            builder.addMember(entry.getKey(), entry.getValue());
+        }
+        return builder.build();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <A extends Annotation> A createAnnotation(Class<A> annotationType, Map<String, Object> values) {
-        return (A) Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[]{annotationType},
-                new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        String methodName = method.getName();
-                        if (values.containsKey(methodName)) {
-                            return values.get(methodName);
-                        }
-                        // 调用默认方法
-                        return method.getDefaultValue();
-                    }
-                });
+    static CodeBlock createCodeBlock(String code) {
+        return CodeBlock.builder().addStatement(code).build();
     }
 }

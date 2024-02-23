@@ -2,10 +2,7 @@ package com.github.alphafoxz.oneboot_processor.processors;
 
 import com.github.alphafoxz.oneboot_processor.annotations.OnebootMapper;
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
@@ -31,7 +28,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
             // 没有根元素，可能是后续轮次
             return false;
         }
-        Mapper mapper = Func.createAnnotation(Mapper.class, Map.of("componentModel", MappingConstants.ComponentModel.SPRING));
+        AnnotationSpec mapper = Func.createAnnotationSpec(Mapper.class, Map.of("componentModel", "\"" + MappingConstants.ComponentModel.SPRING + "\""));
         for (Element element : roundEnv.getElementsAnnotatedWith(OnebootMapper.class)) { //遍历每个类
             try {
                 if (ElementKind.INTERFACE != element.getKind()) {
@@ -41,7 +38,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
                 String packageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
                 String targetClassName = "I" + element.getSimpleName();
                 TypeSpec.Builder interBuilder = TypeSpec.interfaceBuilder(targetClassName)
-                        .addAnnotation(Func.fromAnnotation(mapper))
+                        .addAnnotation(mapper)
                         .addModifiers(Modifier.PUBLIC);
                 for (Element enclosedElement : element.getEnclosedElements()) { //遍历每个方法/成员变量
                     if (enclosedElement.getKind() != ElementKind.METHOD) {
