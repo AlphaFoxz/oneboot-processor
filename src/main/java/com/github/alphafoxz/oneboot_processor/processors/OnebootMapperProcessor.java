@@ -9,7 +9,10 @@ import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
@@ -43,16 +46,15 @@ public class OnebootMapperProcessor extends AbstractProcessor {
                     if (!ElementKind.FIELD.equals(member.getKind())) {
                         continue;
                     }
-                    VariableElement fieldElement = (VariableElement) member;
-                    OnebootMapping anno = fieldElement.getAnnotation(OnebootMapping.class);
+                    OnebootMapping anno = member.getAnnotation(OnebootMapping.class);
                     if (anno == null) {
                         continue;
                     }
                     for (Class<?> target : Set.of(anno.targets())) {
-                        MethodSpec method = MethodSpec.methodBuilder(fieldElement.getSimpleName().toString())
+                        MethodSpec method = MethodSpec.methodBuilder(member.getSimpleName().toString())
                                 .addModifiers(Modifier.PUBLIC)
                                 .returns(target)
-                                .addStatement("return null") // Replace with actual getter logic
+                                .addStatement("return null")
                                 .build();
                         clazzBuilder.addMethod(method);
                     }
