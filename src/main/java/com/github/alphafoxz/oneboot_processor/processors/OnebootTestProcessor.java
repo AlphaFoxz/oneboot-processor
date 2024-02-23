@@ -15,7 +15,6 @@ import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.util.Set;
 
-@SupportedAnnotationTypes(Const.ANNOTATIONS_PACKAGE + ".OnebootTest") // 指定处理器应处理的注解类型
 @SupportedSourceVersion(SourceVersion.RELEASE_17) // 指定支持的源代码版本
 @AutoService(Processor.class)
 public class OnebootTestProcessor extends AbstractProcessor {
@@ -62,5 +61,10 @@ public class OnebootTestProcessor extends AbstractProcessor {
             }
         }
         return true;
+    }
+
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        return Set.of(Const.ANNOTATIONS_PREFIX + OnebootTest.class.getSimpleName());
     }
 }
