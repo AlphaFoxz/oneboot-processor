@@ -6,6 +6,8 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
@@ -13,6 +15,15 @@ public abstract class OnebootProcessor<T extends Annotation> extends AbstractPro
     private Messager messager;
 
     protected void printError(String msg) {
+        printError(msg, null);
+    }
+
+    protected void printError(String msg, Throwable e) {
+        if (e != null) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            msg += "\n" + sw;
+        }
         messager.printMessage(Diagnostic.Kind.ERROR, msg);
     }
 

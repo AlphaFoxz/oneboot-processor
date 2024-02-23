@@ -36,7 +36,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
             try {
                 if (ElementKind.INTERFACE != element.getKind()) {
                     printError(": Only interfaces can be annotated with @OnebootMapper.");
-                    return true;
+                    continue;
                 }
                 String packageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
                 String targetClassName = "I" + element.getSimpleName();
@@ -61,7 +61,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
                         .build();
                 file.writeTo(processingEnv.getFiler());
             } catch (Exception e) {
-                printError("Failed to generate class for " + element.getSimpleName() + ": " + e.getMessage());
+                printError("Failed to generate class for " + element.getSimpleName(), e);
             }
         }
         return true;
