@@ -11,6 +11,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
+import javax.lang.model.util.Elements;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
             // 没有根元素，可能是后续轮次
             return false;
         }
+        Elements elementUtils = processingEnv.getElementUtils();
         AnnotationSpec mapper = Func.createAnnotationSpec(Mapper.class, Map.of("componentModel", "\"" + MappingConstants.ComponentModel.SPRING + "\""));
         for (Element element : roundEnv.getElementsAnnotatedWith(OnebootMapper.class)) { //遍历每个类
             try {
@@ -35,7 +37,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
                     printError(": Only interfaces can be annotated with @OnebootMapper.");
                     continue;
                 }
-                String packageName = processingEnv.getElementUtils().getPackageOf(element).getQualifiedName().toString();
+                String packageName = elementUtils.getPackageOf(element).getQualifiedName().toString();
                 String targetClassName = "I" + element.getSimpleName();
                 TypeSpec.Builder interBuilder = TypeSpec.interfaceBuilder(targetClassName)
                         .addAnnotation(mapper)
@@ -49,8 +51,7 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
                     MethodSpec method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
                             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                             .addParameters(parameterSpecs)
-                            .returns(executableElement.getReturnType().getClass())
-//                            .addStatement("return null")
+                            .returns(TypeName.get(executableElement.getReturnType()))
                             .build();
                     interBuilder.addMethod(method);
                 }

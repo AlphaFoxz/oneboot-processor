@@ -4,7 +4,6 @@
 package com.github.alphafoxz.oneboot_processor.processors;
 
 import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.ParameterSpec;
 
 import javax.lang.model.element.VariableElement;
@@ -38,9 +37,5 @@ class Func {
             builder.addMember(entry.getKey(), entry.getValue());
         }
         return builder.build();
-    }
-
-    static CodeBlock createCodeBlock(String code) {
-        return CodeBlock.builder().addStatement(code).build();
     }
 }
