@@ -7,3 +7,8 @@ pluginManagement {
     }
 }
 rootProject.name = "oneboot-processor"
+
+include(
+    ":processor",
+    ":example",
+)

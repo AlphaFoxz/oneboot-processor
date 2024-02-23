@@ -23,37 +23,5 @@ tasks.bootJar {
     enabled = false
 }
 tasks.jar {
-    enabled = true
-    archiveClassifier = ""
-}
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor(1, TimeUnit.SECONDS)
-}
-dependencyManagement {
-    imports {
-        mavenBom(project.property("parentProject") as String)
-    }
-}
-dependencies {
-    implementation("com.squareup:javapoet")
-    compileOnly("com.google.auto.service:auto-service")
-    annotationProcessor("com.google.auto.service:auto-service")
-    api("org.mapstruct:mapstruct")
-    annotationProcessor("org.mapstruct:mapstruct-processor")
-}
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = rootGroupId
-            artifactId = rootArtifactId
-            version = rootVersion
-            from(components["java"])
-
-            versionMapping {
-                allVariants {
-                    fromResolutionResult()
-                }
-            }
-        }
-    }
+    enabled = false
 }
