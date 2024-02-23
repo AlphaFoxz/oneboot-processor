@@ -47,10 +47,10 @@ public class OnebootMapperProcessor extends OnebootProcessor<OnebootMapper> {
                     ExecutableElement executableElement = (ExecutableElement) enclosedElement;
                     List<ParameterSpec> parameterSpecs = Func.fromParamElements(executableElement.getParameters());
                     MethodSpec method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
-                            .addModifiers(Modifier.PUBLIC)
+                            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                             .addParameters(parameterSpecs)
                             .returns(executableElement.getReturnType().getClass())
-                            .addStatement("return null")
+//                            .addStatement("return null")
                             .build();
                     interBuilder.addMethod(method);
                 }
