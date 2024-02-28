@@ -6,9 +6,9 @@ pluginManagement {
         id("io.spring.dependency-management") version springDependencyManagementPluginVersion
     }
 }
-rootProject.name = "oneboot-processor"
 
 include(
-    ":processor",
     ":example",
+    ":processor",
+    ":starter",
 )
